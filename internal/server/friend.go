@@ -130,7 +130,8 @@ func (s *Server) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if friend, _ := s.friendStore.UpdateFriend(&entity.FriendUpdate{ID: fr.ID, Name: fr.Name, Age: fr.Age}); friend == nil {
-		render.JSON(w, r, "Could not find friend with id "+fid)
+		fidStr := strconv.FormatInt(fr.ID, 10)
+		render.JSON(w, r, "Could not find friend with id " + fidStr)
 	} else {
 		render.JSON(w, r, friend)
 	}
