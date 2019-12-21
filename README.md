@@ -4,7 +4,7 @@ A simple project containing the foundations needed for developing an API with go
 This template is built upon an application that can manage Friends by exposing endpoints that allow CRUD operations.
 
 ## Installation
-The application run as a TCP server exposed by a user defined port. It is possible to start the application either through a docker container or as a standalone local binary on your host machine.
+The application is run as a TCP server exposed by a user defined port. It is possible to start the application either through a docker container or as a standalone local binary on your host machine.
 
 ### Docker
 Before proceeding ensure docker is installed on your system. Also ensure there is a `.env` file in the root directory with the very least `PORT` defined (refer to [example](https://github.com/sayze/golang-template/blob/master/.env.example))
