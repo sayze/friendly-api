@@ -112,6 +112,7 @@ func (s *Server) HandleDeleteFriend(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
+
 	fr := &updateFriendRequest{}
 
 	err := render.DecodeJSON(r.Body, fr)
