@@ -1,3 +1,29 @@
+/**
+
+File contains the route handlers/controllers for the server package.
+
+HandleCreateFriend - POST /friend
+------------------
+Creates a new friend with the data supplied in request body
+
+HandleDeleteFriend - DELETE /friend/{id}
+------------------
+Performs soft delete against the supplied id (if valid)
+
+HandleViewFriend - GET /friend/{id}
+------------------
+Retrieves a single friend based on supplied id (if valid)
+
+HandleUpdateFriend - PATCH /friend
+------------------
+Performs an update to a friend given the request body contains a valid id
+
+Improvements
+
+- Group logic to check existence of friend as one function rather than repeating.
+
+ */
+
 package server
 
 import (
@@ -15,7 +41,13 @@ type createFriendRequest struct {
 	Age  int    `json:"age" validate:"required,numeric"`
 }
 
-// HandleCreateFriend is controller for POST /friend
+// updateFriendRequest defines a request for updating a Friend entity
+type updateFriendRequest struct {
+	ID   int64  `json:"id" validate:"required,numeric"`
+	Name string `json:"name" validate:"required,max=20,min=2"`
+	Age  int    `json:"age" validate:"required,numeric"`
+}
+
 func (s *Server) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 	fr := &createFriendRequest{}
 
@@ -39,7 +71,6 @@ func (s *Server) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, friend)
 }
 
-// HandleGetFriend is controller for Get /friend
 func (s *Server) HandleGetFriend(w http.ResponseWriter, r *http.Request) {
 	fid := chi.URLParam(r, "id")
 
@@ -77,5 +108,30 @@ func (s *Server) HandleDeleteFriend(w http.ResponseWriter, r *http.Request) {
 		render.JSON(w, r, "Could not find friend with id "+fid)
 	} else {
 		render.JSON(w, r, "Successfully deleted friend")
+	}
+}
+
+func (s *Server) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
+	fr := &updateFriendRequest{}
+
+	err := render.DecodeJSON(r.Body, fr)
+
+	if err != nil {
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	// Validate the struct against rules.
+	err = validate.Struct(fr)
+
+	if err != nil {
+		// handle error
+		return
+	}
+
+	if friend, _ := s.friendStore.UpdateFriend(&entity.FriendUpdate{ID: fr.ID, Name: fr.Name, Age: fr.Age}); friend == nil {
+		render.JSON(w, r, "Could not find friend with id "+fid)
+	} else {
+		render.JSON(w, r, friend)
 	}
 }
