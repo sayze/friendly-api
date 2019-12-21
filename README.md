@@ -21,6 +21,7 @@ The most recent golang suite must be installed on your system.
 
 
 ## TODO
+- Improve test coverage
 - Add wire DI tool
 - Refactor package structure to a more domain driven approach
 - Add Sqlite support
