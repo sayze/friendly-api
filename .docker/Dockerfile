@@ -1,0 +1,33 @@
+# Performs a multistage build to reduce image size. Ideally used for production settings.
+
+# Start from the latest golang base image
+FROM golang:latest as builder
+
+# Set the Current Working Directory inside the container
+WORKDIR /app
+
+# Copy go mod and sum files
+COPY go.mod go.sum ./
+
+# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
+RUN go mod download
+
+# CompileDaemon for live reloading during development.
+RUN go get github.com/githubnemo/CompileDaemon
+
+# Copy the source from the current directory to the Working Directory inside the container
+COPY . .
+
+# Build the Go app
+RUN make release
+
+# Final stage to copy artifacts from previous build.
+FROM scratch as prod
+
+ENV PORT 1024
+
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+COPY --from=builder /app/bin/release/server .
+
+CMD ["./server", "${PORT}"]

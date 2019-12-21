@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  api:
+    image: foundu-taker/golang
+    environment:
+      PORT: "${PORT}"
+    build:
+      context: .
+      dockerfile: ./.docker/Dockerfile
+      target: builder
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - ./:/app
