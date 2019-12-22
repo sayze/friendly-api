@@ -17,10 +17,41 @@ type ErrResponse struct {
 	ErrorText  string `json:"error,omitempty"` // application-level error message, for debugging
 }
 
+// SuccessResponse renderer type for handling successful responses.
+type SuccessResponse struct {
+	HTTPStatusCode int         `json:"-"`
+	StatusText     string      `json:"status"`
+	Data           interface{} `json:"data,omitempty"`
+}
+
 // Render renders an ErrorResponse struct.
 func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
 	render.Status(r, e.HTTPStatusCode)
 	return nil
+}
+
+// Render renders an SuccessResponse struct.
+func (e *SuccessResponse) Render(w http.ResponseWriter, r *http.Request) error {
+	render.Status(r, e.HTTPStatusCode)
+	return nil
+}
+
+// SuccessDataRequest returns a data response struct.
+func SuccessDataRequest(data interface{}) render.Renderer {
+	return &SuccessResponse{
+		HTTPStatusCode: 200,
+		StatusText:     "ok",
+		Data:           data,
+	}
+}
+
+// SuccessNoContentRequest returns a no content response struct.
+func SuccessNoContentRequest(message string) render.Renderer {
+	return &SuccessResponse{
+		HTTPStatusCode: 404,
+		StatusText:     "resource not found",
+		Data:           message,
+	}
 }
 
 // ErrInvalidRequest returns an invalid request error.

@@ -10,10 +10,10 @@ type FriendStore interface {
 
 // Friend describes the environment entity.
 type Friend struct {
-	ID     int64
-	Name   string
-	Age    int
-	Active bool
+	ID     int64  `json:"id"`
+	Name   string `json:"name"`
+	Age    int    `json:"age"`
+	Active bool   `json:"active"`
 }
 
 // FriendUpdate defines fields required for an update.

@@ -22,7 +22,7 @@ Improvements
 
 - Group logic to check existence of friend as one function rather than repeating.
 
- */
+*/
 
 package server
 
@@ -68,7 +68,7 @@ func (s *Server) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 
 	friend, _ := s.friendStore.CreateFriend(entity.Friend{Name: fr.Name, Age: fr.Age, Active: true})
 
-	render.JSON(w, r, friend)
+	render.Render(w, r, SuccessDataRequest(friend))
 }
 
 func (s *Server) HandleGetFriend(w http.ResponseWriter, r *http.Request) {
@@ -83,12 +83,10 @@ func (s *Server) HandleGetFriend(w http.ResponseWriter, r *http.Request) {
 
 	friendId, _ := strconv.ParseInt(fid, 10, 64)
 
-	friend, _ := s.friendStore.ViewFriend(friendId)
-
-	if friend == nil {
-		render.JSON(w, r, "Could not find friend with id "+fid)
+	if friend, _ := s.friendStore.ViewFriend(friendId); friend == nil {
+		render.Render(w, r, SuccessNoContentRequest("Could not find friend with id "+fid))
 	} else {
-		render.JSON(w, r, friend)
+		render.Render(w, r, SuccessDataRequest(friend))
 	}
 }
 
@@ -105,9 +103,9 @@ func (s *Server) HandleDeleteFriend(w http.ResponseWriter, r *http.Request) {
 	friendId, _ := strconv.ParseInt(fid, 10, 64)
 
 	if ok, _ := s.friendStore.DeleteFriend(friendId); !ok {
-		render.JSON(w, r, "Could not find friend with id "+fid)
+		render.Render(w, r, SuccessNoContentRequest("Could not find friend with id "+fid))
 	} else {
-		render.JSON(w, r, "Successfully deleted friend")
+		render.Render(w, r, SuccessDataRequest("Friend removed successfully"))
 	}
 }
 
@@ -132,8 +130,8 @@ func (s *Server) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
 
 	if friend, _ := s.friendStore.UpdateFriend(&entity.FriendUpdate{ID: fr.ID, Name: fr.Name, Age: fr.Age}); friend == nil {
 		fidStr := strconv.FormatInt(fr.ID, 10)
-		render.JSON(w, r, "Could not find friend with id " + fidStr)
+		render.Render(w, r, SuccessNoContentRequest("Could not find friend with id "+fidStr))
 	} else {
-		render.JSON(w, r, friend)
+		render.Render(w, r, SuccessDataRequest(friend))
 	}
 }
