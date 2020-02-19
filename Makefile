@@ -20,17 +20,5 @@ debug:
 test:
 	go test ./internal/...
 
-# Start container in interactive mode.
-start:
-	docker-compose up
-
-# Stop container.
-stop:
-	docker-compose stop
-
-# Build container.
-build:
-	docker-compose build
-
 clean:
-	rm -rf bin/
+	rm bin/*
