@@ -1,10 +1,12 @@
 package server
 
 import (
-	validator2 "github.com/go-playground/validator/v10"
+	"net"
 	"net/http"
 	"os"
 	"time"
+
+	validator2 "github.com/go-playground/validator/v10"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -71,7 +73,7 @@ func New(friend entity.FriendStore) (*Server, error) {
 		router:      r,
 		friendStore: friend,
 		server: &http.Server{
-			Addr:    ":" + os.Getenv("PORT"),
+			Addr:    net.JoinHostPort(os.Getenv("HOST"), os.Getenv("PORT")),
 			Handler: r,
 		},
 	}
@@ -85,6 +87,6 @@ func New(friend entity.FriendStore) (*Server, error) {
 
 // ListenAndServe will listen for requests.
 func (s *Server) ListenAndServe() {
-	logrus.Infof("Server listening on port %s", s.server.Addr)
+	logrus.Infof("Server started on %s", s.server.Addr)
 	logrus.Fatal(s.server.ListenAndServe())
 }
