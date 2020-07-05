@@ -2,12 +2,12 @@ package main
 
 import (
 	"github.com/sayze/foundu-taker-api/internal/server"
-	"github.com/sayze/foundu-taker-api/internal/store/memory"
+	"github.com/sayze/foundu-taker-api/internal/store"
 )
 
 func main() {
 	// Create a memory store of friend entity.
-	friendStore, _ := memory.New()
+	friendStore, _ := store.New()
 
 	s, err := server.New(friendStore)
 
