@@ -8,6 +8,7 @@ type Friend struct {
 	Active bool   `json:"active"`
 }
 
+// FriendService defines a Friend implementation.
 type FriendService interface {
 	All() ([]*Friend, error)
 	GetFriend(id int64) (*Friend, error)

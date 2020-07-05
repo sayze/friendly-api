@@ -1,32 +1,29 @@
 package http
 
 import (
-	"net"
-	"net/http"
-	"os"
-	"time"
-
-	validator2 "github.com/go-playground/validator/v10"
-
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
-	"github.com/sayze/friendly-api/internal/entity"
+	validator2 "github.com/go-playground/validator/v10"
+	"github.com/sayze/friendly-api/internal"
 	"github.com/sirupsen/logrus"
+	"net"
+	"net/http"
+	"os"
+	"time"
 )
 
-// Server describes api server implementation.
-type Server struct {
-	router      chi.Router
-	server      *http.Server
-	friendStore entity.FriendStore
+type Handler struct {
+	FriendService internal.FriendService
+	router        chi.Router
+	server        *http.Server
 }
 
 var validate *validator2.Validate
 
 // New creates new server instance.
-func New(friend entity.FriendStore) (*Server, error) {
+func New(service internal.FriendService) (*Handler, error) {
 	r := chi.NewRouter()
 
 	// Setup router middleware.
@@ -69,24 +66,31 @@ func New(friend entity.FriendStore) (*Server, error) {
 		})
 	})
 
-	server := &Server{
-		router:      r,
-		friendStore: friend,
+	handler := &Handler{
+		router:        r,
+		FriendService: service,
 		server: &http.Server{
 			Addr:    net.JoinHostPort(os.Getenv("HOST"), os.Getenv("PORT")),
 			Handler: r,
 		},
 	}
 
-	server.setupRoutes()
+	handler.setupRoutes()
 
 	validate = validator2.New()
 
-	return server, nil
+	return handler, nil
+}
+
+func (h *Handler) setupRoutes() {
+	h.router.Get("/friend/{id}", h.HandleGetFriend)
+	h.router.Post("/friend", h.HandleCreateFriend)
+	h.router.Delete("/friend/{id}", h.HandleDeleteFriend)
+	h.router.Patch("/friend", h.HandleUpdateFriend)
 }
 
 // ListenAndServe will listen for requests.
-func (s *Server) ListenAndServe() {
-	logrus.Infof("Server started on %s", s.server.Addr)
-	logrus.Fatal(s.server.ListenAndServe())
+func (h *Handler) ListenAndServe() {
+	logrus.Infof("Server started on %s", h.server.Addr)
+	logrus.Fatal(h.server.ListenAndServe())
 }

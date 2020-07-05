@@ -30,7 +30,6 @@ import (
 	"errors"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"github.com/sayze/friendly-api/internal"
 	"net/http"
 	"strconv"
 )
@@ -48,7 +47,7 @@ type updateFriendRequest struct {
 	Age  int    `json:"age" validate:"required,numeric"`
 }
 
-func (s *Server) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 	fr := &createFriendRequest{}
 
 	err := render.DecodeJSON(r.Body, fr)
@@ -66,12 +65,12 @@ func (s *Server) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	friend, _ := s.friendStore.CreateFriend(internal.Friend{Name: fr.Name, Age: fr.Age, Active: true})
+	friend, _ := h.FriendService.AddFriend("", fr.Name)
 
 	render.Render(w, r, SuccessDataRequest(friend))
 }
 
-func (s *Server) HandleGetFriend(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGetFriend(w http.ResponseWriter, r *http.Request) {
 	fid := chi.URLParam(r, "id")
 
 	err := validate.Var(fid, "numeric")
@@ -83,14 +82,14 @@ func (s *Server) HandleGetFriend(w http.ResponseWriter, r *http.Request) {
 
 	friendId, _ := strconv.ParseInt(fid, 10, 64)
 
-	if friend, _ := s.friendStore.ViewFriend(friendId); friend == nil {
+	if friend, _ := h.FriendService.GetFriend(friendId); friend == nil {
 		render.Render(w, r, SuccessNoContentRequest("Could not find friend with id "+fid))
 	} else {
 		render.Render(w, r, SuccessDataRequest(friend))
 	}
 }
 
-func (s *Server) HandleDeleteFriend(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleDeleteFriend(w http.ResponseWriter, r *http.Request) {
 	fid := chi.URLParam(r, "id")
 
 	err := validate.Var(fid, "numeric")
@@ -102,14 +101,14 @@ func (s *Server) HandleDeleteFriend(w http.ResponseWriter, r *http.Request) {
 
 	friendId, _ := strconv.ParseInt(fid, 10, 64)
 
-	if ok, _ := s.friendStore.DeleteFriend(friendId); !ok {
+	if ct, _ := h.FriendService.DeleteFriend(friendId); ct < 1 {
 		render.Render(w, r, SuccessNoContentRequest("Could not find friend with id "+fid))
 	} else {
 		render.Render(w, r, SuccessDataRequest("Friend removed successfully"))
 	}
 }
 
-func (s *Server) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
 
 	fr := &updateFriendRequest{}
 
@@ -128,7 +127,7 @@ func (s *Server) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if friend, _ := s.friendStore.UpdateFriend(&internal.FriendUpdate{ID: fr.ID, Name: fr.Name, Age: fr.Age}); friend == nil {
+	if friend, _ := h.FriendService.UpdateFriend(fr.ID, "", fr.Name); friend == nil {
 		fidStr := strconv.FormatInt(fr.ID, 10)
 		render.Render(w, r, SuccessNoContentRequest("Could not find friend with id "+fidStr))
 	} else {
