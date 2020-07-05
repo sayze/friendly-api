@@ -8,7 +8,7 @@ type Friend struct {
 	Active bool   `json:"active"`
 }
 
-type Service interface {
+type FriendService interface {
 	All() ([]*Friend, error)
 	GetFriend(id int64) (*Friend, error)
 	AddFriend(image string, name string) (*Friend, error)
