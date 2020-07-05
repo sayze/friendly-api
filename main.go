@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/sayze/friendly-api/internal"
 	"github.com/sayze/friendly-api/internal/http"
 	"github.com/sayze/friendly-api/internal/memory"
 )
@@ -15,6 +16,8 @@ func main() {
 		panic(err)
 	}
 
-	handler.ListenAndServe()
+	config := internal.NewConfiguration()
+
+	handler.ListenAndServe(config.Http.Host, config.Http.Port)
 
 }

@@ -10,7 +10,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"net"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -69,10 +68,6 @@ func New(service internal.FriendService) (*Handler, error) {
 	handler := &Handler{
 		router:        r,
 		FriendService: service,
-		server: &http.Server{
-			Addr:    net.JoinHostPort(os.Getenv("HOST"), os.Getenv("PORT")),
-			Handler: r,
-		},
 	}
 
 	handler.setupRoutes()
@@ -90,7 +85,12 @@ func (h *Handler) setupRoutes() {
 }
 
 // ListenAndServe will listen for requests.
-func (h *Handler) ListenAndServe() {
+func (h *Handler) ListenAndServe(host string, port string) {
+	h.server = &http.Server{
+		Addr:    net.JoinHostPort(host, port),
+		Handler: h.router,
+	}
+
 	logrus.Infof("Server started on %s", h.server.Addr)
 	logrus.Fatal(h.server.ListenAndServe())
 }
