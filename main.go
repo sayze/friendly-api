@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/sayze/friendly-api/internal/http"
 	"github.com/sayze/friendly-api/internal/memory"
-	"github.com/sayze/friendly-api/internal/store"
 )
 
 func main() {
