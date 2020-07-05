@@ -36,15 +36,15 @@ import (
 
 // createFriendRequest defines a request for creating a Friend entity
 type createFriendRequest struct {
-	Name string `json:"name" validate:"required,max=20,min=2"`
-	Age  int    `json:"age" validate:"required,numeric"`
+	Name  string `json:"name" validate:"required,max=20,min=2"`
+	Image string `json:"image"`
 }
 
 // updateFriendRequest defines a request for updating a Friend entity
 type updateFriendRequest struct {
-	ID   int64  `json:"id" validate:"required,numeric"`
-	Name string `json:"name" validate:"required,max=20,min=2"`
-	Age  int    `json:"age" validate:"required,numeric"`
+	ID    int64  `json:"id" validate:"required,numeric"`
+	Name  string `json:"name" validate:"required,max=20,min=2"`
+	Image string `json:"image"`
 }
 
 func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
@@ -72,6 +72,18 @@ func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) HandleGetFriend(w http.ResponseWriter, r *http.Request) {
 	fid := chi.URLParam(r, "id")
+
+	if len(fid) == 0 {
+		friends, err := h.FriendService.All()
+
+		if err != nil {
+			render.Render(w, r, ErrInvalidRequest(err))
+			return
+		}
+
+		render.Render(w, r, SuccessDataRequest(friends))
+		return
+	}
 
 	err := validate.Var(fid, "numeric")
 

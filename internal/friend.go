@@ -16,10 +16,3 @@ type FriendService interface {
 	UpdateFriend(id int64, image string, name string) (*Friend, error)
 	DeleteFriend(id int64) (int, error)
 }
-
-// FriendUpdate defines fields required for an update.
-type FriendUpdate struct {
-	ID   int64
-	Name string
-	Age  int
-}

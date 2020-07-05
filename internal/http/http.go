@@ -78,6 +78,7 @@ func New(service internal.FriendService) (*Handler, error) {
 }
 
 func (h *Handler) setupRoutes() {
+	h.router.Get("/friend", h.HandleGetFriend)
 	h.router.Get("/friend/{id}", h.HandleGetFriend)
 	h.router.Post("/friend", h.HandleCreateFriend)
 	h.router.Delete("/friend/{id}", h.HandleDeleteFriend)
