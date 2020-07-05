@@ -9,6 +9,10 @@ type FriendService struct {
 	DB []*internal.Friend
 }
 
+func NewService() *FriendService {
+	return &FriendService{}
+}
+
 func (s *FriendService) All() ([]*internal.Friend, error) {
 	var activeFriends []*internal.Friend
 	for _, fr := range s.DB {

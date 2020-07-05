@@ -2,19 +2,20 @@ package main
 
 import (
 	"github.com/sayze/friendly-api/internal/http"
+	"github.com/sayze/friendly-api/internal/memory"
 	"github.com/sayze/friendly-api/internal/store"
 )
 
 func main() {
-	// Create a memory store of friend entity.
-	friendStore, _ := store.New()
 
-	s, err := http.New(friendStore)
+	db := memory.NewService()
+
+	handler, err := http.New(db)
 
 	if err != nil {
 		panic(err)
 	}
 
-	s.ListenAndServe()
+	handler.ListenAndServe()
 
 }
