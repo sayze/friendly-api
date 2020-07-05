@@ -1,4 +1,4 @@
-package server
+package http
 
 func (s *Server) setupRoutes() {
 	s.router.Get("/friend/{id}", s.HandleGetFriend)

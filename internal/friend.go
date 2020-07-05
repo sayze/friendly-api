@@ -1,4 +1,4 @@
-package friend
+package internal
 
 // Friend implements the main entity.
 type Friend struct {

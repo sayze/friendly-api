@@ -1,40 +1,40 @@
 package memory
 
 import (
-	"github.com/sayze/foundu-taker-api/internal/friend"
+	"github.com/sayze/foundu-taker-api/internal"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func seedDB() *DB {
-	data := []*friend.Friend{
-		&friend.Friend{
+func seedDB() *FriendService {
+	data := []*internal.Friend{
+		&internal.Friend{
 			ID:     1,
 			Name:   "Adam Smith",
 			Image:  "fake1",
 			Active: true,
 		},
-		&friend.Friend{
+		&internal.Friend{
 			ID:     121,
 			Name:   "Nolan Andrew",
 			Image:  "fake23",
 			Active: true,
 		},
-		&friend.Friend{
+		&internal.Friend{
 			ID:     31,
 			Name:   "Russel Evans",
 			Image:  "",
 			Active: false,
 		},
 	}
-	return &DB{friends: data}
+	return &FriendService{DB: data}
 }
 
 func TestDB_AddFriend(t *testing.T) {
-	var db DB
+	var db FriendService
 	newFriend, err := db.AddFriend("fake-image", "Adam Smith")
 	assert.Nil(t, err)
-	assert.Equal(t, &friend.Friend{
+	assert.Equal(t, &internal.Friend{
 		ID:     1,
 		Name:   "Adam Smith",
 		Image:  "fake-image",

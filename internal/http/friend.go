@@ -24,13 +24,13 @@ Improvements
 
 */
 
-package server
+package http
 
 import (
 	"errors"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	friend2 "github.com/sayze/foundu-taker-api/internal/friend"
+	"github.com/sayze/foundu-taker-api/internal"
 	"net/http"
 	"strconv"
 )
@@ -66,7 +66,7 @@ func (s *Server) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	friend, _ := s.friendStore.CreateFriend(friend2.Friend{Name: fr.Name, Age: fr.Age, Active: true})
+	friend, _ := s.friendStore.CreateFriend(internal.Friend{Name: fr.Name, Age: fr.Age, Active: true})
 
 	render.Render(w, r, SuccessDataRequest(friend))
 }
@@ -128,7 +128,7 @@ func (s *Server) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if friend, _ := s.friendStore.UpdateFriend(&friend2.FriendUpdate{ID: fr.ID, Name: fr.Name, Age: fr.Age}); friend == nil {
+	if friend, _ := s.friendStore.UpdateFriend(&internal.FriendUpdate{ID: fr.ID, Name: fr.Name, Age: fr.Age}); friend == nil {
 		fidStr := strconv.FormatInt(fr.ID, 10)
 		render.Render(w, r, SuccessNoContentRequest("Could not find friend with id "+fidStr))
 	} else {
