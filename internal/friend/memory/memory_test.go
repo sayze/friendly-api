@@ -66,3 +66,9 @@ func TestDB_UpdateFriend(t *testing.T) {
 	assert.Equal(t, "new-image", fr.Image)
 	assert.Equal(t, "New Name", fr.Name)
 }
+
+func TestDB_All(t *testing.T) {
+	db := seedDB()
+	data, _ := db.All()
+	assert.Len(t, data, 2)
+}

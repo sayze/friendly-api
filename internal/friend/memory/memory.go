@@ -9,6 +9,17 @@ type DB struct {
 	friends []*friend.Friend
 }
 
+func (db *DB) All() ([]*friend.Friend, error) {
+	var activeFriends []*friend.Friend
+	for _, fr := range db.friends {
+		if fr.Active {
+			activeFriends = append(activeFriends, fr)
+		}
+	}
+
+	return activeFriends, nil
+}
+
 func (db *DB) GetFriend(id int64) (*friend.Friend, error) {
 	return db.getFriendById(id), nil
 }

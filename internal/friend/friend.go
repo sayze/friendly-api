@@ -9,6 +9,7 @@ type Friend struct {
 }
 
 type Service interface {
+	All() ([]*Friend, error)
 	GetFriend(id int64) (*Friend, error)
 	AddFriend(image string, name string) (*Friend, error)
 	UpdateFriend(id int64, image string, name string) (*Friend, error)
