@@ -30,7 +30,7 @@ import (
 	"errors"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"github.com/sayze/foundu-taker-api/internal"
+	"github.com/sayze/friendly-api/internal"
 	"net/http"
 	"strconv"
 )

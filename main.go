@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/sayze/foundu-taker-api/internal/http"
-	"github.com/sayze/foundu-taker-api/internal/store"
+	"github.com/sayze/friendly-api/internal/http"
+	"github.com/sayze/friendly-api/internal/store"
 )
 
 func main() {

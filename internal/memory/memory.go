@@ -2,7 +2,7 @@
 package memory
 
 import (
-	"github.com/sayze/foundu-taker-api/internal"
+	"github.com/sayze/friendly-api/internal"
 )
 
 type FriendService struct {

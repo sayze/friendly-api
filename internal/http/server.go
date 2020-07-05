@@ -12,7 +12,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
-	"github.com/sayze/foundu-taker-api/internal/entity"
+	"github.com/sayze/friendly-api/internal/entity"
 	"github.com/sirupsen/logrus"
 )
 

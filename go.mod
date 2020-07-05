@@ -1,4 +1,4 @@
-module github.com/sayze/foundu-taker-api
+module github.com/sayze/friendly-api
 
 go 1.12
 
