@@ -1,5 +1,3 @@
-# Performs a multistage build to reduce image size. Ideally used for production settings.
-
 # Start from the latest golang base image
 FROM golang:latest as builder
 
@@ -16,12 +14,12 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN make release
+RUN GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -ldflags="-s -w" -o bin/server
 
 # Final stage to copy artifacts from previous build.
 FROM scratch as prod
 
-ENV PORT 4040
+ARG PORT=4040
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
