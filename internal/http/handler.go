@@ -1,28 +1,4 @@
-/**
-
-File contains the route handlers/controllers for the server package.
-
-HandleCreateFriend - POST /friend
-------------------
-Creates a new friend with the data supplied in request body
-
-HandleDeleteFriend - DELETE /friend/{id}
-------------------
-Performs soft delete against the supplied id (if valid)
-
-HandleViewFriend - GET /friend/{id}
-------------------
-Retrieves a single friend based on supplied id (if valid)
-
-HandleUpdateFriend - PATCH /friend
-------------------
-Performs an update to a friend given the request body contains a valid id
-
-Improvements
-
-- Group logic to check existence of friend as one function rather than repeating.
-
-*/
+/** File contains the route handlers/controllers for the server package. */
 
 package http
 

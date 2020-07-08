@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/sayze/friendly-api/internal"
+	"github.com/sayze/friendly-api/internal/database/memory"
 	"github.com/sayze/friendly-api/internal/http"
-	"github.com/sayze/friendly-api/internal/memory"
 )
 
 func main() {
