@@ -23,6 +23,6 @@ ARG PORT=4040
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
-COPY --from=builder /app/bin/release/server .
+COPY --from=builder /app/bin/server .
 
 CMD ["./server", "${PORT}"]
