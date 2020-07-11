@@ -10,5 +10,9 @@ func TestNewConfiguration(t *testing.T) {
 	assert.Equal(t, config, &Configuration{&Http{
 		Host: "localhost",
 		Port: "4040",
+	}, &Cdn{
+		Host: "localhost",
+		Port: "6060",
+		Base: "friendly",
 	}})
 }
