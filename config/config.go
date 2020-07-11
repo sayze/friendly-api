@@ -1,4 +1,4 @@
-package main
+package config
 
 import "github.com/spf13/viper"
 
@@ -15,7 +15,7 @@ func NewConfiguration() *Configuration {
 	viper.AutomaticEnv()
 
 	viper.SetDefault("HOST", "localhost")
-	viper.SetDefault("PORT", "7070")
+	viper.SetDefault("PORT", "4040")
 
 	return &Configuration{&Http{
 		Host: viper.GetString("HOST"),
