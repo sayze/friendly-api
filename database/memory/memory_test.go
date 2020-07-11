@@ -1,26 +1,26 @@
 package memory
 
 import (
-	"github.com/sayze/friendly-api/internal"
+	"github.com/sayze/friendly-api/entity"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func seedDB() *FriendService {
-	data := []*internal.Friend{
-		&internal.Friend{
+	data := []*entity.Friend{
+		{
 			ID:     1,
 			Name:   "Adam Smith",
 			Image:  "fake1",
 			Active: true,
 		},
-		&internal.Friend{
+		{
 			ID:     121,
 			Name:   "Nolan Andrew",
 			Image:  "fake23",
 			Active: true,
 		},
-		&internal.Friend{
+		{
 			ID:     31,
 			Name:   "Russel Evans",
 			Image:  "",
@@ -34,7 +34,7 @@ func TestDB_AddFriend(t *testing.T) {
 	var db FriendService
 	newFriend, err := db.AddFriend("fake-image", "Adam Smith")
 	assert.Nil(t, err)
-	assert.Equal(t, &internal.Friend{
+	assert.Equal(t, &entity.Friend{
 		ID:     1,
 		Name:   "Adam Smith",
 		Image:  "fake-image",

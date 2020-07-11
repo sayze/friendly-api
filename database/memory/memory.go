@@ -2,19 +2,19 @@
 package memory
 
 import (
-	"github.com/sayze/friendly-api/internal"
+	"github.com/sayze/friendly-api/entity"
 )
 
 type FriendService struct {
-	DB []*internal.Friend
+	DB []*entity.Friend
 }
 
 func NewService() *FriendService {
 	return &FriendService{}
 }
 
-func (s *FriendService) All() ([]*internal.Friend, error) {
-	var activeFriends []*internal.Friend
+func (s *FriendService) All() ([]*entity.Friend, error) {
+	var activeFriends []*entity.Friend
 	for _, fr := range s.DB {
 		if fr.Active {
 			activeFriends = append(activeFriends, fr)
@@ -24,13 +24,13 @@ func (s *FriendService) All() ([]*internal.Friend, error) {
 	return activeFriends, nil
 }
 
-func (s *FriendService) GetFriend(id int64) (*internal.Friend, error) {
+func (s *FriendService) GetFriend(id int64) (*entity.Friend, error) {
 	return s.getFriendById(id), nil
 }
 
-func (s *FriendService) AddFriend(image string, name string) (*internal.Friend, error) {
+func (s *FriendService) AddFriend(image string, name string) (*entity.Friend, error) {
 	dbSize := int64(len(s.DB))
-	s.DB = append(s.DB, &internal.Friend{
+	s.DB = append(s.DB, &entity.Friend{
 		ID:     dbSize + 1,
 		Name:   name,
 		Image:  image,
@@ -39,7 +39,7 @@ func (s *FriendService) AddFriend(image string, name string) (*internal.Friend, 
 	return s.DB[dbSize], nil
 }
 
-func (s *FriendService) UpdateFriend(id int64, image string, name string) (*internal.Friend, error) {
+func (s *FriendService) UpdateFriend(id int64, image string, name string) (*entity.Friend, error) {
 	fr := s.getFriendById(id)
 
 	if fr == nil {
@@ -63,7 +63,7 @@ func (s *FriendService) DeleteFriend(id int64) (int, error) {
 	return 1, nil
 }
 
-func (s *FriendService) getFriendById(id int64) *internal.Friend {
+func (s *FriendService) getFriendById(id int64) *entity.Friend {
 	for _, fr := range s.DB {
 		if id == fr.ID && fr.Active {
 			return fr

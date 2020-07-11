@@ -6,7 +6,7 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
 	validator2 "github.com/go-playground/validator/v10"
-	"github.com/sayze/friendly-api/internal"
+	"github.com/sayze/friendly-api/entity"
 	"github.com/sirupsen/logrus"
 	"net"
 	"net/http"
@@ -14,15 +14,15 @@ import (
 )
 
 type Handler struct {
-	FriendService internal.FriendService
+	FriendService entity.FriendService
 	router        chi.Router
 	server        *http.Server
 }
 
 var validate *validator2.Validate
 
-// New creates new server instance.
-func New(service internal.FriendService) (*Handler, error) {
+// NewHandler creates new server instance.
+func NewHandler(service entity.FriendService) (*Handler, error) {
 	r := chi.NewRouter()
 
 	// Setup router middleware.
