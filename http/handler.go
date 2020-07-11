@@ -48,7 +48,7 @@ func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) HandleGetFriend(w http.ResponseWriter, r *http.Request) {
 	fid := chi.URLParam(r, "id")
-	search := chi.URLParam(r, "search")
+	search := r.URL.Query().Get("search")
 
 	if len(fid) == 0 {
 		// TODO: Should probably have a search functioned as service definition.
