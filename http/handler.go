@@ -6,7 +6,9 @@ import (
 	"errors"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
+	"io"
 	"net/http"
+	"os"
 	"strconv"
 )
 
@@ -24,24 +26,36 @@ type updateFriendRequest struct {
 }
 
 func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
-	fr := &createFriendRequest{}
-
-	err := render.DecodeJSON(r.Body, fr)
+	err := r.ParseMultipartForm(10 << 20)
 
 	if err != nil {
 		render.Render(w, r, ErrInvalidRequest(err))
 		return
 	}
 
-	// Validate the struct against rules.
-	err = validate.Struct(fr)
+	filename, err := uploadImageFromRequest(r)
 
-	if err != nil {
-		// handle error
+	if err != nil && err != http.ErrMissingFile {
+		render.Render(w, r, ErrFatalRequest(err))
 		return
 	}
 
-	friend, _ := h.FriendService.AddFriend("", fr.Name)
+	err = validate.Struct(createFriendRequest{
+		Name:  r.FormValue("name"),
+		Image: filename,
+	})
+
+	if err != nil {
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	friend, err := h.FriendService.AddFriend(filename, r.FormValue("name"))
+
+	if err != nil {
+		render.Render(w, r, ErrFatalRequest(err))
+		return
+	}
 
 	render.Render(w, r, SuccessDataRequest(friend))
 }
@@ -99,21 +113,37 @@ func (h *Handler) HandleDeleteFriend(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
-
-	fr := &updateFriendRequest{}
-
-	err := render.DecodeJSON(r.Body, fr)
+	err := r.ParseMultipartForm(10 << 20)
 
 	if err != nil {
 		render.Render(w, r, ErrInvalidRequest(err))
 		return
 	}
 
-	// Validate the struct against rules.
+	filename, err := uploadImageFromRequest(r)
+
+	if err != nil && err != http.ErrMissingFile {
+		render.Render(w, r, ErrFatalRequest(err))
+		return
+	}
+
+	id, err := strconv.ParseInt(r.FormValue("id"), 10, 64)
+
+	if err != nil {
+		render.Render(w, r, ErrFatalRequest(err))
+		return
+	}
+
+	fr := updateFriendRequest{
+		ID:    id,
+		Name:  r.FormValue("name"),
+		Image: filename,
+	}
+
 	err = validate.Struct(fr)
 
 	if err != nil {
-		// handle error
+		render.Render(w, r, ErrInvalidRequest(err))
 		return
 	}
 
@@ -123,4 +153,30 @@ func (h *Handler) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
 	} else {
 		render.Render(w, r, SuccessDataRequest(friend))
 	}
+}
+
+func uploadImageFromRequest(r *http.Request) (string, error) {
+	file, handler, err := r.FormFile("image")
+
+	if err != nil {
+		return "", err
+	}
+
+	defer file.Close()
+
+	f, err := os.OpenFile("./public/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+
+	if err != nil {
+		return "", err
+	}
+
+	defer f.Close()
+
+	_, err = io.Copy(f, file)
+
+	if err != nil {
+		return "", err
+	}
+
+	return handler.Filename, nil
 }

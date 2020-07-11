@@ -64,6 +64,16 @@ func ErrInvalidRequest(err error) render.Renderer {
 	}
 }
 
+// ErrFatalRequest returns an internal error response.
+func ErrFatalRequest(err error) render.Renderer {
+	return &ErrResponse{
+		Err:            err,
+		HTTPStatusCode: 500,
+		StatusText:     "Internal error.",
+		ErrorText:      err.Error(),
+	}
+}
+
 // ErrValidationFailed returns a response containing all the failed validation rules.
 func ErrValidationFailed(err error) render.Renderer {
 	for _, err := range err.(validator2.ValidationErrors) {
