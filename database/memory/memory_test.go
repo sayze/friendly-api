@@ -69,6 +69,8 @@ func TestDB_UpdateFriend(t *testing.T) {
 
 func TestDB_All(t *testing.T) {
 	db := seedDB()
-	data, _ := db.All()
+	data, _ := db.All("")
 	assert.Len(t, data, 2)
+	data, _ = db.All("adam")
+	assert.Len(t, data, 1)
 }

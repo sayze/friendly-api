@@ -48,9 +48,11 @@ func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) HandleGetFriend(w http.ResponseWriter, r *http.Request) {
 	fid := chi.URLParam(r, "id")
+	search := chi.URLParam(r, "search")
 
 	if len(fid) == 0 {
-		friends, err := h.FriendService.All()
+		// TODO: Should probably have a search functioned as service definition.
+		friends, err := h.FriendService.All(search)
 
 		if err != nil {
 			render.Render(w, r, ErrInvalidRequest(err))

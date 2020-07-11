@@ -3,6 +3,7 @@ package memory
 
 import (
 	"github.com/sayze/friendly-api/entity"
+	"strings"
 )
 
 type FriendService struct {
@@ -13,10 +14,18 @@ func NewService() *FriendService {
 	return &FriendService{}
 }
 
-func (s *FriendService) All() ([]*entity.Friend, error) {
+func (s *FriendService) All(search string) ([]*entity.Friend, error) {
 	var activeFriends []*entity.Friend
+	searchToLower := strings.ToLower(search)
+
 	for _, fr := range s.DB {
-		if fr.Active {
+		if !fr.Active {
+			continue
+		}
+
+		nameToLower := strings.ToLower(fr.Name)
+
+		if len(searchToLower) == 0 || strings.Contains(nameToLower, searchToLower) {
 			activeFriends = append(activeFriends, fr)
 		}
 	}

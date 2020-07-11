@@ -10,7 +10,7 @@ type Friend struct {
 
 // FriendService defines a Friend implementation.
 type FriendService interface {
-	All() ([]*Friend, error)
+	All(search string) ([]*Friend, error)
 	GetFriend(id int64) (*Friend, error)
 	AddFriend(image string, name string) (*Friend, error)
 	UpdateFriend(id int64, image string, name string) (*Friend, error)
