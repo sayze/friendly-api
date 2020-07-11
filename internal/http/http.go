@@ -54,7 +54,7 @@ func New(service internal.FriendService) (*Handler, error) {
 			latency := time.Since(start)
 
 			logrus.WithFields(logrus.Fields{
-				"status":     ww.Status,
+				"status":     ww.Status(),
 				"took":       latency,
 				"remote":     r.RemoteAddr,
 				"request":    r.RequestURI,
