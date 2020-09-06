@@ -4,7 +4,8 @@
       "name": "friendly",
       "path": ".",
       "env":  [
-        "PORT=4040"
+        "PORT=4040",
+        "API_KEY="
       ],
       "commands": {
         "build": "go build -ldflags=\"-s -w\"  -o bin/server",

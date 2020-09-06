@@ -17,12 +17,13 @@ type Handler struct {
 	FriendService entity.FriendService
 	router        chi.Router
 	server        *http.Server
+	Cdn			*Cdn
 }
 
 var validate *validator2.Validate
 
 // NewHandler creates new server instance.
-func NewHandler(service entity.FriendService) (*Handler, error) {
+func NewHandler(service entity.FriendService, cdn *Cdn) (*Handler, error) {
 	r := chi.NewRouter()
 
 	// Setup router middleware.
@@ -68,6 +69,7 @@ func NewHandler(service entity.FriendService) (*Handler, error) {
 	handler := &Handler{
 		router:        r,
 		FriendService: service,
+		Cdn: cdn,
 	}
 
 	handler.setupRoutes()

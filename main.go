@@ -10,13 +10,13 @@ func main() {
 
 	db := memory.NewService()
 
-	handler, err := http.NewHandler(db)
+	conf := config.NewConfiguration()
+
+	handler, err := http.NewHandler(db, http.NewCdn(conf.Cdn.BaseUrl, conf.Cdn.ApiKey, conf.Cdn.CloudName))
 
 	if err != nil {
 		panic(err)
 	}
-
-	conf := config.NewConfiguration()
 
 	handler.ListenAndServe(conf.Http.Host, conf.Http.Port)
 

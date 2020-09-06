@@ -6,9 +6,8 @@ import (
 	"errors"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"io"
+	"mime/multipart"
 	"net/http"
-	"os"
 	"strconv"
 )
 
@@ -33,12 +32,15 @@ func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filename, err := uploadImageFromRequest(r)
+	file, err := uploadImageFromRequest(r)
 
 	if err != nil && err != http.ErrMissingFile {
 		render.Render(w, r, ErrFatalRequest(err))
 		return
 	}
+
+	// Call cdn for file upload.
+	h.Cdn.UploadImage(file.)
 
 	err = validate.Struct(createFriendRequest{
 		Name:  r.FormValue("name"),
@@ -155,28 +157,24 @@ func (h *Handler) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func uploadImageFromRequest(r *http.Request) (string, error) {
-	file, handler, err := r.FormFile("image")
+func uploadImageFromRequest(r *http.Request) (multipart.File, error) {
 
-	if err != nil {
-		return "", err
-	}
 
-	defer file.Close()
 
-	f, err := os.OpenFile("./public/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
 
-	if err != nil {
-		return "", err
-	}
+	//f, err := os.OpenFile("./public/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
+	//
+	//if err != nil {
+	//	return "", err
+	//}
+	//
+	//defer f.Close()
+	//
+	//_, err = io.Copy(f, file)
+	//
+	//if err != nil {
+	//	return "", err
+	//}
 
-	defer f.Close()
-
-	_, err = io.Copy(f, file)
-
-	if err != nil {
-		return "", err
-	}
-
-	return handler.Filename, nil
+	return file, nil
 }
