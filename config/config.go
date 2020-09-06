@@ -13,8 +13,8 @@ type Http struct {
 }
 
 type Cdn struct {
-	BaseUrl string
-	ApiKey string
+	BaseUrl   string
+	ApiKey    string
 	CloudName string
 }
 
@@ -30,8 +30,8 @@ func NewConfiguration() *Configuration {
 		Host: viper.GetString("HTTP_HOST"),
 		Port: viper.GetString("HTTP_PORT"),
 	}, &Cdn{
-		BaseUrl: viper.GetString("CDN_BASE_URL"),
-		ApiKey: viper.GetString("API_KEY"),
+		BaseUrl:   viper.GetString("CDN_BASE_URL"),
+		ApiKey:    viper.GetString("API_KEY"),
 		CloudName: viper.GetString("API_KEY"),
 	}}
 

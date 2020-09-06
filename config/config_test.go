@@ -11,8 +11,8 @@ func TestNewConfiguration(t *testing.T) {
 		Host: "localhost",
 		Port: "4040",
 	}, &Cdn{
-		BaseUrl: "https://api.cloudinary.com/v1_1",
-		ApiKey: "",
+		BaseUrl:   "https://api.cloudinary.com/v1_1",
+		ApiKey:    "",
 		CloudName: "sayze",
 	}})
 }

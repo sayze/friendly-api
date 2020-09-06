@@ -1,6 +1,10 @@
 package http
 
 import (
+	"net"
+	"net/http"
+	"time"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
@@ -8,16 +12,12 @@ import (
 	validator2 "github.com/go-playground/validator/v10"
 	"github.com/sayze/friendly-api/entity"
 	"github.com/sirupsen/logrus"
-	"net"
-	"net/http"
-	"time"
 )
 
 type Handler struct {
 	FriendService entity.FriendService
 	router        chi.Router
 	server        *http.Server
-	Cdn			*Cdn
 }
 
 var validate *validator2.Validate
@@ -69,7 +69,7 @@ func NewHandler(service entity.FriendService, cdn *Cdn) (*Handler, error) {
 	handler := &Handler{
 		router:        r,
 		FriendService: service,
-		Cdn: cdn,
+		Cdn:           cdn,
 	}
 
 	handler.setupRoutes()
