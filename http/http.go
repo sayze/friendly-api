@@ -23,7 +23,7 @@ type Handler struct {
 var validate *validator2.Validate
 
 // NewHandler creates new server instance.
-func NewHandler(service entity.FriendService, cdn *Cdn) (*Handler, error) {
+func NewHandler(service entity.FriendService) (*Handler, error) {
 	r := chi.NewRouter()
 
 	// Setup router middleware.
@@ -69,7 +69,6 @@ func NewHandler(service entity.FriendService, cdn *Cdn) (*Handler, error) {
 	handler := &Handler{
 		router:        r,
 		FriendService: service,
-		Cdn:           cdn,
 	}
 
 	handler.setupRoutes()
