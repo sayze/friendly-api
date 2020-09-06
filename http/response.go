@@ -31,8 +31,8 @@ func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
 }
 
 // Render renders an SuccessResponse struct.
-func (e *SuccessResponse) Render(w http.ResponseWriter, r *http.Request) error {
-	render.Status(r, e.HTTPStatusCode)
+func (s *SuccessResponse) Render(w http.ResponseWriter, r *http.Request) error {
+	render.Status(r, s.HTTPStatusCode)
 	return nil
 }
 

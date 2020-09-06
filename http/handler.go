@@ -6,7 +6,6 @@ import (
 	"errors"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
-	"mime/multipart"
 	"net/http"
 	"strconv"
 )
@@ -32,19 +31,8 @@ func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	file, err := uploadImageFromRequest(r)
-
-	if err != nil && err != http.ErrMissingFile {
-		render.Render(w, r, ErrFatalRequest(err))
-		return
-	}
-
-	// Call cdn for file upload.
-	h.Cdn.UploadImage(file.)
-
 	err = validate.Struct(createFriendRequest{
-		Name:  r.FormValue("name"),
-		Image: filename,
+		Name: r.FormValue("name"),
 	})
 
 	if err != nil {
@@ -52,7 +40,7 @@ func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	friend, err := h.FriendService.AddFriend(filename, r.FormValue("name"))
+	friend, err := h.FriendService.AddFriend("", r.FormValue("name"))
 
 	if err != nil {
 		render.Render(w, r, ErrFatalRequest(err))
@@ -67,7 +55,6 @@ func (h *Handler) HandleGetFriend(w http.ResponseWriter, r *http.Request) {
 	search := r.URL.Query().Get("search")
 
 	if len(fid) == 0 {
-		// TODO: Should probably have a search functioned as service definition.
 		friends, err := h.FriendService.All(search)
 
 		if err != nil {
@@ -122,13 +109,6 @@ func (h *Handler) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filename, err := uploadImageFromRequest(r)
-
-	if err != nil && err != http.ErrMissingFile {
-		render.Render(w, r, ErrFatalRequest(err))
-		return
-	}
-
 	id, err := strconv.ParseInt(r.FormValue("id"), 10, 64)
 
 	if err != nil {
@@ -137,9 +117,8 @@ func (h *Handler) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fr := updateFriendRequest{
-		ID:    id,
-		Name:  r.FormValue("name"),
-		Image: filename,
+		ID:   id,
+		Name: r.FormValue("name"),
 	}
 
 	err = validate.Struct(fr)
@@ -155,26 +134,4 @@ func (h *Handler) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
 	} else {
 		render.Render(w, r, SuccessDataRequest(friend))
 	}
-}
-
-func uploadImageFromRequest(r *http.Request) (multipart.File, error) {
-
-
-
-
-	//f, err := os.OpenFile("./public/"+handler.Filename, os.O_WRONLY|os.O_CREATE, 0666)
-	//
-	//if err != nil {
-	//	return "", err
-	//}
-	//
-	//defer f.Close()
-	//
-	//_, err = io.Copy(f, file)
-	//
-	//if err != nil {
-	//	return "", err
-	//}
-
-	return file, nil
 }
