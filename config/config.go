@@ -21,8 +21,8 @@ type Cdn struct {
 func NewConfiguration() *Configuration {
 	viper.AutomaticEnv()
 
-	viper.SetDefault("HTTP_HOST", "localhost")
-	viper.SetDefault("HTTP_PORT", "4040")
+	viper.SetDefault("HOST", "localhost")
+	viper.SetDefault("PORT", "4040")
 	viper.SetDefault("CDN_BASE_URL", "https://api.cloudinary.com/v1_1")
 	viper.SetDefault("CloudName", "sayze")
 
