@@ -31,8 +31,12 @@ func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if total := h.FriendService.CountFriends(); total > 50 {
-		render.Render(w, r, ErrValidationFailed(errors.New("maximum friends exceeded")))
+	if total := h.FriendService.CountFriends(); total > 100 {
+		render.Render(w, r, &ErrResponse{
+			HTTPStatusCode: http.StatusBadRequest,
+			ErrorText:      "maximum friends exceeded",
+			StatusText:     "server error",
+		})
 		return
 	}
 
