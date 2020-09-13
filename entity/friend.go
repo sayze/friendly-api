@@ -15,4 +15,5 @@ type FriendService interface {
 	AddFriend(image string, name string) (*Friend, error)
 	UpdateFriend(id int64, image string, name string) (*Friend, error)
 	DeleteFriend(id int64) (int, error)
+	CountFriends() int
 }

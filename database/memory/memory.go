@@ -81,3 +81,14 @@ func (s *FriendService) getFriendById(id int64) *entity.Friend {
 
 	return nil
 }
+
+func (s *FriendService) CountFriends() int {
+	var total int
+	for _, fr := range s.DB {
+		if fr.Active {
+			total++
+		}
+	}
+
+	return  total
+}

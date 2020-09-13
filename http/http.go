@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
+	"github.com/go-chi/httprate"
 	validator2 "github.com/go-playground/validator/v10"
 	"github.com/sayze/friendly-api/entity"
 	"github.com/sirupsen/logrus"
@@ -30,6 +31,7 @@ func NewHandler(service entity.FriendService) (*Handler, error) {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Recoverer)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
+	r.Use(httprate.Limit(50, 1*time.Minute))
 
 	// Configure CORS.
 	r.Use(cors.New(cors.Options{
