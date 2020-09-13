@@ -19,7 +19,7 @@ RUN GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -ldflags="-s -w" -o bin/serve
 # Final stage to copy artifacts from previous build.
 FROM scratch as prod
 
-ARG PORT=8080
+ARG PORT=80
 
 EXPOSE ${PORT}
 
