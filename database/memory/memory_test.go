@@ -1,30 +1,28 @@
 package memory
 
 import (
+	"testing"
+
 	"github.com/sayze/friendly-api/entity"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func seedDB() *FriendService {
 	data := []*entity.Friend{
 		{
-			ID:     1,
-			Name:   "Adam Smith",
-			Image:  "fake1",
-			Active: true,
+			ID:    1,
+			Name:  "Adam Smith",
+			Image: "fake1",
 		},
 		{
-			ID:     121,
-			Name:   "Nolan Andrew",
-			Image:  "fake23",
-			Active: true,
+			ID:    121,
+			Name:  "Nolan Andrew",
+			Image: "fake23",
 		},
 		{
-			ID:     31,
-			Name:   "Russel Evans",
-			Image:  "",
-			Active: false,
+			ID:    31,
+			Name:  "Russel Evans",
+			Image: "",
 		},
 	}
 	return &FriendService{DB: data}
@@ -35,10 +33,9 @@ func TestDB_AddFriend(t *testing.T) {
 	newFriend, err := db.AddFriend("fake-image", "Adam Smith")
 	assert.Nil(t, err)
 	assert.Equal(t, &entity.Friend{
-		ID:     1,
-		Name:   "Adam Smith",
-		Image:  "fake-image",
-		Active: true,
+		ID:    1,
+		Name:  "Adam Smith",
+		Image: "fake-image",
 	}, newFriend)
 }
 
@@ -47,9 +44,6 @@ func TestDB_GetFriend(t *testing.T) {
 	fr := db.getFriendById(121)
 	assert.Equal(t, int64(121), fr.ID)
 	assert.Equal(t, "Nolan Andrew", fr.Name)
-
-	// Assert an inactive friend can't be accessed.
-	assert.Nil(t, db.getFriendById(31))
 }
 
 func TestDB_DeleteFriend(t *testing.T) {
@@ -70,7 +64,7 @@ func TestDB_UpdateFriend(t *testing.T) {
 func TestDB_All(t *testing.T) {
 	db := seedDB()
 	data, _ := db.All("")
-	assert.Len(t, data, 2)
+	assert.Len(t, data, 3)
 	data, _ = db.All("adam")
 	assert.Len(t, data, 1)
 }

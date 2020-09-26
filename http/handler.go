@@ -4,10 +4,11 @@ package http
 
 import (
 	"errors"
-	"github.com/go-chi/chi"
-	"github.com/go-chi/render"
 	"net/http"
 	"strconv"
+
+	"github.com/go-chi/chi"
+	"github.com/go-chi/render"
 )
 
 // createFriendRequest defines a request for creating a Friend entity

@@ -1,10 +1,11 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/go-chi/render"
 	validator2 "github.com/go-playground/validator/v10"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 // ErrResponse renderer type for handling all sorts of errors.

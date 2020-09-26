@@ -2,8 +2,9 @@
 package memory
 
 import (
-	"github.com/sayze/friendly-api/entity"
 	"strings"
+
+	"github.com/sayze/friendly-api/entity"
 )
 
 type FriendService struct {
@@ -19,10 +20,6 @@ func (s *FriendService) All(search string) ([]*entity.Friend, error) {
 	searchToLower := strings.ToLower(search)
 
 	for _, fr := range s.DB {
-		if !fr.Active {
-			continue
-		}
-
 		nameToLower := strings.ToLower(fr.Name)
 
 		if len(searchToLower) == 0 || strings.Contains(nameToLower, searchToLower) {
@@ -40,10 +37,9 @@ func (s *FriendService) GetFriend(id int64) (*entity.Friend, error) {
 func (s *FriendService) AddFriend(image string, name string) (*entity.Friend, error) {
 	dbSize := int64(len(s.DB))
 	s.DB = append(s.DB, &entity.Friend{
-		ID:     dbSize + 1,
-		Name:   name,
-		Image:  image,
-		Active: true,
+		ID:    dbSize + 1,
+		Name:  name,
+		Image: image,
 	})
 	return s.DB[dbSize], nil
 }
@@ -61,20 +57,20 @@ func (s *FriendService) UpdateFriend(id int64, image string, name string) (*enti
 }
 
 func (s *FriendService) DeleteFriend(id int64) (int, error) {
-	fr := s.getFriendById(id)
+	originalLen := len(s.DB)
 
-	if fr == nil {
-		return 0, nil
+	for idx, fr := range s.DB {
+		if id == fr.ID {
+			s.DB = append(s.DB[:idx], s.DB[idx+1:]...)
+		}
 	}
 
-	fr.Active = false
-
-	return 1, nil
+	return originalLen - len(s.DB), nil
 }
 
 func (s *FriendService) getFriendById(id int64) *entity.Friend {
 	for _, fr := range s.DB {
-		if id == fr.ID && fr.Active {
+		if id == fr.ID {
 			return fr
 		}
 	}
@@ -83,12 +79,5 @@ func (s *FriendService) getFriendById(id int64) *entity.Friend {
 }
 
 func (s *FriendService) CountFriends() int {
-	var total int
-	for _, fr := range s.DB {
-		if fr.Active {
-			total++
-		}
-	}
-
-	return  total
+	return len(s.DB)
 }
