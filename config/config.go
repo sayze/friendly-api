@@ -15,7 +15,7 @@ type Http struct {
 type Cdn struct {
 	BaseUrl   string
 	ApiKey    string
-	CloudName string
+	ApiSecret string
 }
 
 func NewConfiguration() *Configuration {
@@ -23,16 +23,15 @@ func NewConfiguration() *Configuration {
 
 	viper.SetDefault("HOST", "0.0.0.0")
 	viper.SetDefault("PORT", "4040")
-	viper.SetDefault("CDN_BASE_URL", "https://api.cloudinary.com/v1_1")
-	viper.SetDefault("CloudName", "sayze")
+	viper.SetDefault("CDN_BASE_URL", "https://api.cloudinary.com/v1_1/sayze")
 
 	return &Configuration{&Http{
 		Host: viper.GetString("HOST"),
 		Port: viper.GetString("PORT"),
 	}, &Cdn{
 		BaseUrl:   viper.GetString("CDN_BASE_URL"),
-		ApiKey:    viper.GetString("API_KEY"),
-		CloudName: viper.GetString("API_KEY"),
+		ApiKey:    viper.GetString("CDN_API_KEY"),
+		ApiSecret: viper.GetString("CDN_API_SECRET"),
 	}}
 
 }

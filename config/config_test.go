@@ -1,18 +1,19 @@
 package config
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewConfiguration(t *testing.T) {
 	config := NewConfiguration()
 	assert.Equal(t, config, &Configuration{&Http{
-		Host: "localhost",
+		Host: "0.0.0.0",
 		Port: "4040",
 	}, &Cdn{
-		BaseUrl:   "https://api.cloudinary.com/v1_1",
+		BaseUrl:   "https://api.cloudinary.com/v1_1/sayze",
 		ApiKey:    "",
-		CloudName: "sayze",
+		ApiSecret: "",
 	}})
 }
