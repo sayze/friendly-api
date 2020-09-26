@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/sayze/friendly-api/config"
+
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
@@ -17,6 +19,7 @@ import (
 
 type Handler struct {
 	FriendService entity.FriendService
+	Cdn           *Cdn
 	router        chi.Router
 	server        *http.Server
 }
@@ -24,7 +27,7 @@ type Handler struct {
 var validate *validator2.Validate
 
 // NewHandler creates new server instance.
-func NewHandler(service entity.FriendService) (*Handler, error) {
+func NewHandler(service entity.FriendService, conf *config.Cdn) (*Handler, error) {
 	r := chi.NewRouter()
 
 	// Setup router middleware.
@@ -71,6 +74,11 @@ func NewHandler(service entity.FriendService) (*Handler, error) {
 	handler := &Handler{
 		router:        r,
 		FriendService: service,
+		Cdn: &Cdn{
+			url:       conf.BaseUrl,
+			apiSecret: conf.ApiSecret,
+			apiKey:    conf.ApiKey,
+		},
 	}
 
 	handler.setupRoutes()

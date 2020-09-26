@@ -12,7 +12,7 @@ func main() {
 
 	conf := config.NewConfiguration()
 
-	handler, err := http.NewHandler(db)
+	handler, err := http.NewHandler(db, conf.Cdn)
 
 	if err != nil {
 		panic(err)

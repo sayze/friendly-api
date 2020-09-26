@@ -50,7 +50,24 @@ func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	friend, err := h.FriendService.AddFriend("", r.FormValue("name"))
+	// handle image upload
+	file, handler, err := r.FormFile("image")
+
+	defer file.Close()
+
+	if err != nil {
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	imgID, err := h.Cdn.uploadImage(file, handler.Filename)
+
+	if err != nil {
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	friend, err := h.FriendService.AddFriend(imgID, r.FormValue("name"))
 
 	if err != nil {
 		render.Render(w, r, ErrFatalRequest(err))
