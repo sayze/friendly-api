@@ -25,6 +25,7 @@ type Cdn struct {
 type uploadResponse struct {
 	PublicId     string `json:"public_id"`
 	Version      uint   `json:"version"`
+	SecureUrl    string `json:"secure_url"`
 	ResourceType string `json:"resource_type"`
 	Format       string `json:"format"`
 	Size         int    `json:"bytes"`
@@ -113,7 +114,7 @@ func (cdn *Cdn) uploadImage(img io.Reader, filename, id string) (string, error) 
 		if err = json.Unmarshal(respBody, &uploadResp); err != nil {
 			return filename, err
 		}
-		return cdn.buildImageUrl(uploadResp.PublicId), nil
+		return uploadResp.SecureUrl, nil
 	} else {
 		return filename, errors.New("Request error:" + cdnResponse.Status)
 	}
