@@ -35,6 +35,33 @@ func (cdn *Cdn) buildImageUrl(publicID string) string {
 	return fmt.Sprintf("%s/%s", cdn.imageUrl, publicID)
 }
 
+func (cdn *Cdn) deleteImage(id string) error {
+	body := &bytes.Buffer{}
+	form := multipart.NewWriter(body)
+
+	err := form.WriteField("public_id", id)
+
+	if err != nil {
+		return err
+	}
+
+	signature, err := sign(strconv.FormatInt(time.Now().Unix(), 10), id, cdn.apiSecret)
+
+	if err != nil {
+		return err
+	}
+
+	err = form.WriteField("signature", signature)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = http.Post(cdn.uploadUrl, form.FormDataContentType(), body)
+
+	return err
+}
+
 func (cdn *Cdn) uploadImage(img io.Reader, filename, id string) (string, error) {
 	ts := strconv.FormatInt(time.Now().Unix(), 10)
 	body := &bytes.Buffer{}
@@ -98,7 +125,6 @@ func (cdn *Cdn) uploadImage(img io.Reader, filename, id string) (string, error) 
 	cdnResponse, err := http.Post(cdn.uploadUrl, form.FormDataContentType(), body)
 
 	if err != nil {
-		fmt.Println(err)
 		return filename, err
 	}
 

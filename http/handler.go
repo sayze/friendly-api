@@ -136,6 +136,13 @@ func (h *Handler) HandleDeleteFriend(w http.ResponseWriter, r *http.Request) {
 
 	friendId, _ := strconv.ParseInt(fid, 10, 64)
 
+	err = h.Cdn.deleteImage(fid)
+
+	if err != nil {
+		render.Render(w, r, ErrFatalRequest(err))
+		return
+	}
+
 	if ct, _ := h.FriendService.DeleteFriend(friendId); ct < 1 {
 		render.Render(w, r, SuccessNoContentRequest("Could not find friend with id "+fid))
 	} else {
