@@ -10,12 +10,14 @@ import (
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"time"
 )
 
 type Cdn struct {
-	url       string
+	uploadUrl string
+	imageUrl  string
 	apiSecret string
 	apiKey    string
 }
@@ -52,13 +54,19 @@ func (cdn Cdn) uploadImage(img io.Reader, filename string) (string, error) {
 		return filename, err
 	}
 
-	err = form.WriteField("signature", sign(ts, publicID, cdn.apiSecret))
+	signature, err := sign(ts, publicID, cdn.apiSecret)
 
 	if err != nil {
 		return filename, err
 	}
 
-	formImage, err := form.CreateFormFile("file", filename)
+	err = form.WriteField("signature", signature)
+
+	if err != nil {
+		return filename, err
+	}
+
+	formImage, err := form.CreateFormFile("file", trimExt(filename))
 
 	if err != nil {
 		return filename, err
@@ -76,9 +84,16 @@ func (cdn Cdn) uploadImage(img io.Reader, filename string) (string, error) {
 		return filename, err
 	}
 
-	cdnResponse, err := http.Post(cdn.url+"/image/upload", form.FormDataContentType(), body)
+	err = form.Close()
 
 	if err != nil {
+		return filename, err
+	}
+
+	cdnResponse, err := http.Post(cdn.uploadUrl, form.FormDataContentType(), body)
+
+	if err != nil {
+		fmt.Println(err)
 		return filename, err
 	}
 
@@ -94,15 +109,27 @@ func (cdn Cdn) uploadImage(img io.Reader, filename string) (string, error) {
 		if err = json.Unmarshal(respBody, &uploadResp); err != nil {
 			return filename, err
 		}
-
 		return uploadResp.PublicId, nil
 	} else {
+		bodyBytes, _ := ioutil.ReadAll(cdnResponse.Body)
+		fmt.Println(string(bodyBytes))
 		return filename, errors.New("Request error:" + cdnResponse.Status)
 	}
 }
 
-func sign(timestamp, publicID, secret string) string {
+func sign(timestamp, publicID, secret string) (string, error) {
 	paramStr := fmt.Sprintf("public_id=%s&timestamp=%s%s", publicID, timestamp, secret)
 	hasher := sha1.New()
-	return string(hasher.Sum([]byte(paramStr)))
+	_, err := hasher.Write([]byte(paramStr))
+
+	if err != nil {
+		return "", err
+	}
+
+	return fmt.Sprintf("%x", hasher.Sum(nil)), nil
+}
+
+func trimExt(filename string) string {
+	fileExt := filepath.Ext(filename)
+	return filename[0 : len(filename)-len(fileExt)]
 }
