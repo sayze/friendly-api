@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -60,7 +61,7 @@ func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	imgID, err := h.Cdn.uploadImage(file, handler.Filename)
+	imgID, err := h.Cdn.uploadImage(file, handler.Filename, slugify(r.FormValue("name")))
 
 	if err != nil {
 		render.Render(w, r, ErrInvalidRequest(err))
@@ -161,4 +162,8 @@ func (h *Handler) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
 	} else {
 		render.Render(w, r, SuccessDataRequest(friend))
 	}
+}
+
+func slugify(in string) string {
+	return strings.ToLower(strings.ReplaceAll(in, " ", "-"))
 }

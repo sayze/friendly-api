@@ -34,11 +34,11 @@ func (cdn *Cdn) buildImageUrl(publicID string) string {
 	return fmt.Sprintf("%s/%s", cdn.imageUrl, publicID)
 }
 
-func (cdn *Cdn) uploadImage(img io.Reader, filename string) (string, error) {
+func (cdn *Cdn) uploadImage(img io.Reader, filename, id string) (string, error) {
 	ts := strconv.FormatInt(time.Now().Unix(), 10)
 	body := &bytes.Buffer{}
 	form := multipart.NewWriter(body)
-	publicID := "cat-" + time.Now().Format("20060102150405")
+	publicID := id
 
 	err := form.WriteField("timestamp", ts)
 
