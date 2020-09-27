@@ -51,8 +51,14 @@ func (s *FriendService) UpdateFriend(id int64, image string, name string) (*enti
 		return nil, nil
 	}
 
-	fr.Name = name
-	fr.Image = image
+	if len(name) != 0 {
+		fr.Name = name
+	}
+
+	if len(image) != 0 {
+		fr.Image = image
+	}
+
 	return fr, nil
 }
 

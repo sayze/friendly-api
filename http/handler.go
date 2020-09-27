@@ -51,27 +51,41 @@ func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// handle image upload
-	file, handler, err := r.FormFile("image")
-
-	defer file.Close()
-
 	if err != nil {
 		render.Render(w, r, ErrInvalidRequest(err))
 		return
 	}
 
-	imgID, err := h.Cdn.uploadImage(file, handler.Filename, slugify(r.FormValue("name")))
-
-	if err != nil {
-		render.Render(w, r, ErrInvalidRequest(err))
-		return
-	}
-
-	friend, err := h.FriendService.AddFriend(imgID, r.FormValue("name"))
+	friend, err := h.FriendService.AddFriend("", r.FormValue("name"))
 
 	if err != nil {
 		render.Render(w, r, ErrFatalRequest(err))
+		return
+	}
+
+	// handle image upload
+	file, handler, err := r.FormFile("image")
+
+	switch err {
+	case nil:
+		defer file.Close()
+		fid := strconv.FormatInt(friend.ID, 10)
+		image, err := h.Cdn.uploadImage(file, handler.Filename, fid)
+
+		if err != nil {
+			render.Render(w, r, ErrInvalidRequest(err))
+			return
+		}
+
+		if _, err = h.FriendService.UpdateFriend(friend.ID, image, ""); err != nil {
+			render.Render(w, r, SuccessNoContentRequest("Could not find friend with id "+fid))
+		}
+
+		break
+	case http.ErrMissingFile:
+		break
+	default:
+		render.Render(w, r, ErrInvalidRequest(err))
 		return
 	}
 
@@ -156,7 +170,28 @@ func (h *Handler) HandleUpdateFriend(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if friend, _ := h.FriendService.UpdateFriend(fr.ID, "", fr.Name); friend == nil {
+	file, handler, err := r.FormFile("image")
+
+	var newImage string
+
+	switch err {
+	case nil:
+		defer file.Close()
+		newImage, err = h.Cdn.uploadImage(file, handler.Filename, strconv.FormatInt(id, 10))
+
+		if err != nil {
+			render.Render(w, r, ErrInvalidRequest(err))
+			return
+		}
+		break
+	case http.ErrMissingFile:
+		break
+	default:
+		render.Render(w, r, ErrInvalidRequest(err))
+		return
+	}
+
+	if friend, _ := h.FriendService.UpdateFriend(fr.ID, newImage, fr.Name); friend == nil {
 		fidStr := strconv.FormatInt(fr.ID, 10)
 		render.Render(w, r, SuccessNoContentRequest("Could not find friend with id "+fidStr))
 	} else {
