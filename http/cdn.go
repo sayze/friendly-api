@@ -30,7 +30,11 @@ type uploadResponse struct {
 	Size         int    `json:"bytes"`
 }
 
-func (cdn Cdn) uploadImage(img io.Reader, filename string) (string, error) {
+func (cdn *Cdn) buildImageUrl(publicID string) string {
+	return fmt.Sprintf("%s/%s", cdn.imageUrl, publicID)
+}
+
+func (cdn *Cdn) uploadImage(img io.Reader, filename string) (string, error) {
 	ts := strconv.FormatInt(time.Now().Unix(), 10)
 	body := &bytes.Buffer{}
 	form := multipart.NewWriter(body)
@@ -109,10 +113,8 @@ func (cdn Cdn) uploadImage(img io.Reader, filename string) (string, error) {
 		if err = json.Unmarshal(respBody, &uploadResp); err != nil {
 			return filename, err
 		}
-		return uploadResp.PublicId, nil
+		return cdn.buildImageUrl(uploadResp.PublicId), nil
 	} else {
-		bodyBytes, _ := ioutil.ReadAll(cdnResponse.Body)
-		fmt.Println(string(bodyBytes))
 		return filename, errors.New("Request error:" + cdnResponse.Status)
 	}
 }

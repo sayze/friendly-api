@@ -75,7 +75,8 @@ func NewHandler(service entity.FriendService, conf *config.Cdn) (*Handler, error
 		router:        r,
 		FriendService: service,
 		Cdn: &Cdn{
-			url:       conf.UploadUrl,
+			uploadUrl: conf.UploadUrl,
+			imageUrl:  conf.ImageUrl,
 			apiSecret: conf.ApiSecret,
 			apiKey:    conf.ApiKey,
 		},
