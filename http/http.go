@@ -90,6 +90,7 @@ func NewHandler(service entity.FriendService, conf *config.Cdn) (*Handler, error
 }
 
 func (h *Handler) setupRoutes() {
+	h.router.Get("/", h.HandleHealth)
 	h.router.Get("/friend", h.HandleGetFriend)
 	h.router.Get("/friend/{id}", h.HandleGetFriend)
 	h.router.Post("/friend", h.HandleCreateFriend)

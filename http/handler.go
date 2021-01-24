@@ -4,6 +4,7 @@ package http
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -23,6 +24,15 @@ type updateFriendRequest struct {
 	ID    int64  `json:"id" validate:"required,numeric"`
 	Name  string `json:"name" validate:"required,max=20,min=2"`
 	Image string `json:"image"`
+}
+
+func (h *Handler) HandleHealth(w http.ResponseWriter, r *http.Request) {
+	_, err := fmt.Fprintln(w, `{"status":"ok"}`)
+
+	if err != nil {
+		render.Render(w, r, ErrFatalRequest(err))
+		return
+	}
 }
 
 func (h *Handler) HandleCreateFriend(w http.ResponseWriter, r *http.Request) {
