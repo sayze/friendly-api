@@ -18,6 +18,6 @@ func main() {
 		panic(err)
 	}
 
-	handler.ListenAndServe(conf.Http.Host, conf.Http.Port)
+	handler.ListenAndServe("", conf.Http.Port)
 
 }

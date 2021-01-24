@@ -14,7 +14,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -ldflags="-s -w" -o bin/server
+RUN GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -o bin/server
 
 # Final stage to copy artifacts from previous build.
 FROM scratch as prod

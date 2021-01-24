@@ -8,7 +8,6 @@ type Configuration struct {
 }
 
 type Http struct {
-	Host string
 	Port string
 }
 
@@ -21,14 +20,11 @@ type Cdn struct {
 
 func NewConfiguration() *Configuration {
 	viper.AutomaticEnv()
-
-	viper.SetDefault("HOST", "0.0.0.0")
 	viper.SetDefault("PORT", "4040")
 	viper.SetDefault("CDN_UPLOAD_URL", "https://api.cloudinary.com/v1_1/sayze/image/upload")
 	viper.SetDefault("CDN_IMAGE_URL", "https://res.cloudinary.com/sayze/image/upload")
 
 	return &Configuration{&Http{
-		Host: viper.GetString("HOST"),
 		Port: viper.GetString("PORT"),
 	}, &Cdn{
 		UploadUrl: viper.GetString("CDN_UPLOAD_URL"),
