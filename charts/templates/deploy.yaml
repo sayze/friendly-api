@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: srv-friendly
+  namespace: {{.Release.Namespace}}
+spec:
+  selector:
+    matchLabels:
+      app: srv-friendly
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: srv-friendly
+    spec:
+      containers:
+        - name: srv-friendly
+          image: sayze/friendly-api
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{.Values.port}}
+          env:
+            - name: PORT
+              value: "{{.Values.port}}"
+            - name: CDN_UPLOAD_URL
+              value: "{{.Values.cdn.upload_url}}"
+            - name: CDN_IMAGE_URL
+              value: "{{.Values.cdn.image_url}}"
+            - name: CDN_API_KEY
+              value: "{{.Values.cdn.api_key}}"
+            - name: CDN_API_SECRET
+              value: "{{.Values.cdn.api_secret}}"
