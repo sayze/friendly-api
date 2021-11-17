@@ -1,17 +1,44 @@
-# Golang CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-go/ for more details
 version: 2
-jobs:
-  build:
+executors:
+  docker-publisher:
+    environment:
+      IMAGE_NAME: sayze/friendly-api
     docker:
-      # specify the version
-      - image: circleci/golang:1.13
-
-    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
+      - image: circleci/buildpack-deps:stretch
+jobs: # basic units of work in a run
+  build: # runs not using Workflows must have a `build` job as entry point
+    executor: docker-publisher
     steps:
       - checkout
-      
-      - run: make test
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t $IMAGE_NAME:latest .
+      - run:
+          name: Archive Docker image
+          command: docker save -o image.tar $IMAGE_NAME
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./image.tar
+  publish:
+    executor: docker-publisher
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
+      - run:
+          name: Load archived Docker image
+          command: docker load -i /tmp/workspace/image.tar
+      - run:
+          name: Publish to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push $IMAGE_NAME:latest
 
-      - run: make release
+workflows:
+  version: 2
+  build-workflow:
+    jobs:
+      - build
+      - publish
