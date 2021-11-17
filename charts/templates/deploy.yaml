@@ -27,6 +27,12 @@ spec:
             - name: CDN_IMAGE_URL
               value: "{{.Values.cdn.image_url}}"
             - name: CDN_API_KEY
-              value: "{{.Values.cdn.api_key}}"
+              valueFrom:
+                secretKeyRef:
+                  name: "{{.Values.cdn.secret.reference}}"
+                  key: "{{.Values.cdn.secret.api_key_value}}"
             - name: CDN_API_SECRET
-              value: "{{.Values.cdn.api_secret}}"
+              valueFrom:
+                secretKeyRef:
+                  name: "{{.Values.cdn.secret.reference}}"
+                  key: "{{.Values.cdn.secret.api_secret_value}}"
