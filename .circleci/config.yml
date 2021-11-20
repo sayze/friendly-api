@@ -6,7 +6,7 @@ executors:
     docker:
       - image: circleci/buildpack-deps:stretch
 orbs:
-  helm-deploy: hazmo/helm-deploy@0.0.4
+ helm-deploy: hazmo/helm-deploy@0.0.4
 jobs: # basic units of work in a run
   build: # runs not using Workflows must have a `build` job as entry point
     executor: docker-publisher
