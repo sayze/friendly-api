@@ -36,7 +36,8 @@ jobs: # basic units of work in a run
           name: Publish to Docker Hub
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push $IMAGE_NAME:latest
+            docker tag $IMAGE_NAME:latest $IMAGE_NAME:$CIRCLE_SHA1
+            docker push $IMAGE_NAME:$CIRCLE_SHA1
   deploy:
     executor: helm-deploy/default
     steps:
