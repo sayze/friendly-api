@@ -1,10 +1,10 @@
-name: build-publish
-on: 
+name: "Build and Deploy"
+on:
   push:
     branches:
       - 'master'
 jobs:
-  docker:
+  publish:
     runs-on: ubuntu-latest
     steps:
       -
@@ -23,6 +23,20 @@ jobs:
         name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
-        with:
+        with: 
           push: true
-          tags: sayze/friendly-api:latest
+          tags: sayze/friendly-api:${{ github.sha }}
+  deploy:
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Check out repository code
+        uses: actions/checkout@v2
+      -
+        name: Upgrade helm chart
+        uses: koslibpro/helm-eks-action@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG }}
+        with:
+          command: helm upgrade --install srv-friendly charts -n friendly --set image.tag=${{ github.sha }} --wait
