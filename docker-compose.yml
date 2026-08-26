@@ -1,0 +1,12 @@
+services:
+  friendly-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${ADDR_HOST_PORT:-4040}:4040"
+    environment:
+      ADDR: ":4040"
+      CDN_UPLOAD_URL: ${CDN_UPLOAD_URL:-https://api.cloudinary.com/v1_1/sayze/image/upload}
+      CDN_API_KEY: ${CDN_API_KEY:-}
+      CDN_API_SECRET: ${CDN_API_SECRET:-}
