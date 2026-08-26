@@ -1,26 +1,22 @@
-# Start from the latest golang base image
-FROM golang:latest as builder
+FROM golang:1.25-alpine AS build
 
-# Set the Current Working Directory inside the container
-WORKDIR /app
+WORKDIR /src
 
-# Copy go mod and sum files
+RUN apk add --no-cache ca-certificates
+
 COPY go.mod go.sum ./
-
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod download
 
-# Copy the source from the current directory to the Working Directory inside the container
-COPY . .
+COPY cmd ./cmd
+COPY internal ./internal
 
-# Build the Go app
-RUN GOOS=linux CGO_ENABLED=0 GOARCH=amd64 go build -o bin/server
+RUN CGO_ENABLED=0 go build -o /out/friendly-api ./cmd/api
 
-# Final stage to copy artifacts from previous build.
-FROM scratch as prod
+FROM scratch
 
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=build /out/friendly-api /usr/local/bin/friendly-api
 
-COPY --from=builder /app/bin/server .
+EXPOSE 4040
 
-ENTRYPOINT ["./server"]
+ENTRYPOINT ["/usr/local/bin/friendly-api"]

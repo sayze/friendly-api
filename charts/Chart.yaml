@@ -1,4 +1,0 @@
-apiVersion: v2
-name: srv-friendly
-version: 1.0.0
-description: Friendly backend chart

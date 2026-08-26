@@ -1,8 +1,0 @@
-port: 5050
-cdn:
-  upload_url: "https://api.cloudinary.com/v1_1/sayze/image/upload"
-  image_url: "https://res.cloudinary.com/sayze/image/upload"
-  secret:
-    reference: friendly-secret
-    api_key_value: apiKey
-    api_secret_value: apiSecret
