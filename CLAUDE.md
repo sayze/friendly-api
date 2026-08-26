@@ -122,24 +122,18 @@ For local dev, `docker-compose.yml` builds and runs the same image; copy
 credentials only matter if you're exercising image upload/delete against a
 real account), then `docker compose up --build`.
 
-## Deployment (`friendly-api.nomad.hcl`)
+## Deployment
 
-Replaces the previous Kubernetes/Helm deployment (`charts/` +
-`.github/workflows/build_deploy.yml`, both removed) with the Nomad+Traefik
-pattern used by `qotd-api` and the rest of the homelab. Fronted by Traefik
-on its own subdomain (`Host(friendly-api.sayedsadeed.com)`, no path prefix —
-unlike `qotd-api`, this service isn't sharing the `api.sayedsadeed.com`
-domain). Since the health check endpoint (`GET /`) needs no auth, the Nomad
-service check is a real `http` check against `/` rather than a bare `tcp`
-check. `CDN_API_KEY`/`CDN_API_SECRET` are pulled from Vault at runtime via a
-`template` stanza (`vault { policies = ["nomad"] }`), reading
-`secret/data/homelab/friendly-api`'s `cdn_api_key`/`cdn_api_secret` fields —
-that Vault path/keys need to exist before this job can start.
+The previous Kubernetes/Helm deployment (`charts/` +
+`.github/workflows/build_deploy.yml`) has been removed as part of the
+modernization, but a replacement deploy pipeline hasn't been set up yet —
+deliberately deferred, not an oversight. When it's time, follow the
+Nomad+Traefik pattern used by `qotd-api` and the rest of the homelab (a
+`friendly-api.nomad.hcl` job file in this repo, plus a `deploy.yml` workflow
+that builds/pushes the Docker image and runs `nomad job run`). The Docker
+image (`Dockerfile`) is already in place and ready for that.
 
 `.github/workflows/test.yml` runs `make unit` on every push/PR.
-`.github/workflows/deploy.yml` runs on push to `master`: test → build/push
-the Docker image (tagged by branch and short SHA) → `nomad job run` against
-the homelab Nomad cluster.
 
 ## Related
 

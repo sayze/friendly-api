@@ -68,7 +68,5 @@ shapes.
 
 ## Deployment
 
-Deploys as a Docker image to a [Nomad](https://www.nomadproject.io/) cluster
-via `friendly-api.nomad.hcl`, fronted by Traefik. See
-`.github/workflows/deploy.yml` for the CI pipeline (test → build/push →
-`nomad job run`).
+Not set up yet. A `Dockerfile` is in place; the deploy pipeline itself
+(Nomad job + CI workflow) is deferred for now.
